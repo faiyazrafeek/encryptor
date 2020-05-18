@@ -1,7 +1,7 @@
 <?php  
-    function clear (){
-       
-    }
+
+    require('config/config.php');
+    require('config/db.php');    
 
     //Message vars
     $msg = "";
@@ -10,26 +10,7 @@
     $decryption = "";
     $encryption_key = "";
     $decryption_key = "";
-    //Check for the Submit
-    if(filter_has_var(INPUT_POST, 'submit')){
-        //Get form Data
-        $simple_string = htmlspecialchars($_POST['message']) ;
-        $encryption_key = htmlspecialchars($_POST['secretKey']);
 
-        //Check Required Fields
-        if(!empty($simple_string) && !empty($encryption_key)){
-            //Passed
-            echo 'Passed';
-            $simple_string = '';
-            $encryption_key = '';
-        }else{
-            //Failed
-            $msg = 'Please fill in all fileds';
-            $msgClass = 'alert-danger';
-        }
-
-    }
-    
     // Store a string into the variable which 
     // need to be Encrypted 
    // $simple_string = "Welcome to GeeksforGeeks\n"; 
@@ -69,6 +50,28 @@
     
     // Display the decrypted string 
     echo "Decrypted String: " . $decryption; 
+
+    //check for submit
+    if(isset($_POST['submit'])){
+        //Get form data
+        $simple_string = mysqli_real_escape_string($conn, htmlspecialchars($_POST['message']));
+        $encryption_key = mysqli_real_escape_string($conn, $_POST['secretKey']);
+        //$encryption = mysqli_real_escape_string($conn, $_POST['encryption']);
+        $encryption = openssl_encrypt($simple_string, $ciphering, 
+                $encryption_key, $options, $encryption_iv); 
+
+        $query = "INSERT INTO encryption(message, secret_key, encrypted) VALUES ('$simple_string', '$encryption_key', '$encryption')";
+
+        if(mysqli_query($conn, $query)){
+            header('Location:' .ROOT_URL.'test.php');
+        }else{
+            echo 'Error: '. mysqli_errno($conn);
+        }
+
+    }
+
+    
+    
   
 ?> 
 
@@ -89,7 +92,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-dark">
     <a class="navbar-brand text-white" href="test.php">
-        <img src="src/icons.svg" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+        <img src="src/img/icons.svg" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
         Encryptor
     </a>
     </nav>
@@ -113,18 +116,24 @@
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
             <div class="form-group">
                 <label>Your Text</label>
-                <input type="text" name="message" value="<?php echo isset($_POST['message']) ? $simple_string : ''; ?>" class="form-control">
+                <textarea class="form-control" name="message"></textarea>
             </div>
             <div class="form-group">
                 <label>Secret Key</label>
-                <input type="text" name="secretKey" value="<?php echo isset($_POST['secretKey']) ? $encryption_key : ''; ?>" class="form-control">
+                <input type="text" name="secretKey" class="form-control">
                 <small id="secretKey" class="form-text text-muted">Don't share this key with others.</small>
             </div>
             <div class="form-group">
-                <label>Encrypted Text</label>
-                <input type="text" name="output" class="form-control" readonly value="<?php echo $decryption;?>">
+            <label>Encrypted Text</label>
+                <textarea class="form-control" name="encryption" > <?php echo $encryption; ?> </textarea>
             </div>
             <button type="submit" name="submit" class="btn btn-primary">Encrypt</button>
+        </form>
+        <form action="">
+        <div class="form-group">
+            <label>Encrypted Text</label>
+                <textarea class="form-control" name="encryption" > <?php echo isset($_POST['encryption']) ? $simple_string : $simple_string ; ?> </textarea>
+            </div>
         </form>
     </div>
 

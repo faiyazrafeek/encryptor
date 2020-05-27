@@ -45,6 +45,23 @@
                 <p class="masthead-subheading font-weight-light mb-0">Encrypt / Decrypt your text </p>
             </div>
         </header>
+        <script>
+            function copyText() {
+              var copyText = document.getElementById("encryptedContent");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999)
+              document.execCommand("copy");
+              alert("Copied the text: " + copyText.value);
+            }
+
+            function copyText2() {
+              var copyText = document.getElementById("decryptedContent");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999)
+              document.execCommand("copy");
+              alert("Copied the text: " + copyText.value);
+            }
+        </script>
         <!-- Portfolio Section-->
         <section class="page-section portfolio" id="portfolio">
             <div class="container">
@@ -71,6 +88,7 @@
                       </div>             
                       <input  type="button" value="Enrypt" onclick="webdevencrypt.setEncrypt('originalContent','encryptedContent','passcode')" class="btn btn-primary"></>
                       <input  type="button" value="Decrypt" onclick="webdevencrypt.setDecrypt('originalContent','decryptedContent','passcode')"  class="btn btn-secondary"></input>
+                      <input type="button" value="Copy Text" onclick="copyText2()" class="btn btn-success">
                     </fieldset>
                   </form>
                 </div>
@@ -132,15 +150,7 @@
             <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
         </div>
 
-        <script>
-            function myFunction() {
-              var copyText = document.getElementById("encryptedContent");
-              copyText.select();
-              copyText.setSelectionRange(0, 99999)
-              document.execCommand("copy");
-              alert("Copied the text: " + copyText.value);
-            }
-        </script>
+       
 
         <!-- Bootstrap core JS-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
